@@ -18,11 +18,14 @@ class GetDoc(object):
             _getdoc = pydoc.getdoc
         self._getdoc = _getdoc
 
+    def get_catalog_filename(self, package_name):
+        return os.path.join(
+            PY_IHELP_ROOT, '%s.%s.ihelp' %(package_name, self.language))
+
     def load_catalog(self, package_name):
         """Load a catalog corresponding to package_name
         """
-        catalog_fn = os.path.join(
-            PY_IHELP_ROOT, '%s.%s.ihelp' %(package_name, self.language))
+        catalog_fn = self.get_catalog_filename(package_name)
         catalog = {}
         if os.path.exists(catalog_fn):
             try:
@@ -50,11 +53,7 @@ class GetDoc(object):
             catalog = self.cache[package_name]
         return catalog
 
-    def getdoc(self, obj):
-        """Get the doc string or comments for an object."""
-        # get original document.
-        doc = self._getdoc(obj)
-        # first, build the unique object path according to module and object's name.
+    def resolve_object_path(self, obj):
         module_path_bits, object_name = [], None
         if inspect.ismethoddescriptor(obj):
             # avoid failing getmodule for method descriptors
@@ -72,7 +71,7 @@ class GetDoc(object):
                 for cls in reversed(getattr(obj.__objclass__, '__bases__', [])):
                     if (hasattr(cls, obj.__name__) and
                         hasattr(getattr(cls, obj.__name__), '__doc__') and
-                        getattr(cls, obj.__name__).__doc__==doc):
+                        getattr(cls, obj.__name__).__doc__==self._getdoc(obj)):
                         module_path_bits = (
                             str(inspect.getmodule(cls).__name__).split('.')+
                             cls.__name__.split('.'))
@@ -92,13 +91,18 @@ class GetDoc(object):
         else:
             # here, just give up understanding slithy internals.
             module_path_bits = ['__undefined__']
-        # second, lookup catalog for package_name and language.
         package_name = module_path_bits[0] if module_path_bits else ''
-        catalog = self.get_catalog(package_name)
         if object_name is None:
             object_name = '.'.join(module_path_bits[1:] + [obj.__name__])
+        return package_name, object_name
+
+    def get_signature(self, doc):
+        return hashlib.md5(doc).hexdigest()
+
+    def get_translation(self, package_name, object_name, doc):
+        # now we have the catalog, try translation.
+        catalog = self.get_catalog(package_name)
         if catalog:
-            # now we have the catalog, try translation.
             if object_name in catalog:
                 last_valid = None
                 for signature, valid, translated in catalog[object_name]:
@@ -106,7 +110,7 @@ class GetDoc(object):
                     if valid:
                         last_valid = translated
                         # ... its signature should match.
-                        if signature==hashlib.md5(doc).hexdigest():
+                        if signature==self.get_signature(doc):
                             doc = translated
                             break
                 # if no signatures match, use last valid translation.
@@ -114,7 +118,58 @@ class GetDoc(object):
                     doc = last_valid
                     # TBD: The document may be obsolete here --
                     # signature is diffrent to the catalog. Notification required.
+        return doc
+
+    def getdoc(self, obj):
+        """Get the doc string or comments for an object."""
+        # get original document.
+        doc = self._getdoc(obj)
+        # first, build unique path for object.
+        package_name, object_name = self.resolve_object_path(obj)
+        # second, lookup catalog for package_name and language.
+        doc = self.get_translation(package_name, object_name, doc)
         return re.sub('^ *\n', '', doc.rstrip()) if doc else ''
+
+
+class CatalogGetDoc(GetDoc):
+
+    def escape_doument(self, doc):
+        return (doc.replace("\\", "\\\\")
+                .replace('"', r'\"')
+                .replace("'", r'\"'))
+
+    def dump_catalog(self, package_name, catalog):
+        catalog_fn = self.get_catalog_filename(package_name)
+        catalog_file = open(catalog_fn, 'wb')
+        catalog_file.write('{\n')
+        for object_name in sorted(catalog.keys()):
+            catalog_file.write("'%s': [\n" %(object_name))
+            for signature, valid, doc in catalog[object_name]:
+                catalog_file.write("('%s', %s, \n\"\"\"" %(signature, valid))
+                catalog_file.write(self.escape_document(doc))
+                catalog_file.write("\"\"\"),\n\n")
+            catalog_file.write("],\n\n\n" %(object_name))
+        catalog_file.write('}\n')
+        catalog_file.close()
+    
+    def getdoc(self, obj):
+        # get original document.
+        doc = self._getdoc(obj)
+        # first, build unique path for object.
+        package_name, object_name = self.resolve_object_path(obj)
+        # second, get the catalog
+        catalog = self.get_catalog(package_name)
+        updated = False
+        if object_name not in catalog:
+            updated = True
+            catalog[object_name] = []
+        entries = catalog[object_name]
+        signature = self.get_signature(doc)
+        if signature not in (e[0] for e in entries):
+            updated = True
+            catalog[object_name].append((signature, False, doc))
+        if updated:
+            self.dump_catalog(package_name, catalog)
 
 
 def install(*args):
