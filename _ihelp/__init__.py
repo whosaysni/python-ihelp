@@ -134,10 +134,10 @@ class GetDoc(object):
 class DocDistiller(GetDoc):
 
     def __init__(self, *args, **kwargs):
-        super(CatalogGetDoc, self).__init__(*args, **kwargs)
+        super(DocDistiller, self).__init__(*args, **kwargs)
         self.updated_packages = []
 
-    def escape_doument(self, doc):
+    def escape_document(self, doc):
         return (doc.replace("\\", "\\\\")
                 .replace('"', r'\"')
                 .replace("'", r'\"'))
@@ -152,7 +152,7 @@ class DocDistiller(GetDoc):
                 catalog_file.write("('%s', %s, \n\"\"\"" %(signature, valid))
                 catalog_file.write(self.escape_document(doc))
                 catalog_file.write("\"\"\"),\n\n")
-            catalog_file.write("],\n\n\n" %(object_name))
+            catalog_file.write("],\n\n\n")
         catalog_file.write('}\n')
         catalog_file.close()
     
@@ -193,7 +193,8 @@ def dump_catalog(module_names, *args, **kwargs):
     fake_module = get_fake_module('_ipydoc_dump', 'pydoc')
     distiller = DocDistiller(*args, **kwargs)
     fake_module.getdoc = distiller.getdoc
-    help = fake_module.Helper(None, None)
+    from StringIO import StringIO
+    help = fake_module.Helper(StringIO(), StringIO())
     for module_name in module_names:
         help(module_name)
     distiller.dump_docs()
@@ -201,13 +202,9 @@ def dump_catalog(module_names, *args, **kwargs):
 
 def install(*args, **kwargs):
     _ipydoc = get_fake_module('_ipydoc', 'pydoc')
-    _ipydoc.getdoc =  GetDoc(*args, **kwargs).getdoc
+    _ipydoc.getdoc = GetDoc(*args, **kwargs).getdoc
     import __builtin__
     __builtin__.ihelp = _ipydoc.Helper(sys.stdin, sys.stdout)
     del __builtin__
 
-
-if __name__=='__main__':
-    pass
-else:
-    install()
+install()

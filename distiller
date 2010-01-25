@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+
+from _ihelp import dump_catalog
+
+if __name__=='__main__':
+    import sys
+    if len(sys.argv)<1:
+        sys.stderr.write(
+            'Usage: <command> <module_name_1> <module_name_2> ...\n')
+        sys.exit(0)
+    dump_catalog(arg.strip() for arg in sys.argv[1:])
