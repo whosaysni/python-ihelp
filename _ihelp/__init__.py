@@ -131,7 +131,11 @@ class GetDoc(object):
         return re.sub('^ *\n', '', doc.rstrip()) if doc else ''
 
 
-class CatalogGetDoc(GetDoc):
+class DocDistiller(GetDoc):
+
+    def __init__(self, *args, **kwargs):
+        super(CatalogGetDoc, self).__init__(*args, **kwargs)
+        self.updated_packages = []
 
     def escape_doument(self, doc):
         return (doc.replace("\\", "\\\\")
@@ -169,17 +173,41 @@ class CatalogGetDoc(GetDoc):
             updated = True
             catalog[object_name].append((signature, False, doc))
         if updated:
-            self.dump_catalog(package_name, catalog)
+            self.updated_packages.append(package_name)
+
+    def dump_docs(self):
+        for package_name in self.updated_packages:
+            catalog = self.cache.get(package_name, None)
+            if catalog is not None:
+                self.dump_catalog(package_name, catalog)
 
 
-def install(*args):
-    import __builtin__, imp, sys
-    if '_ipydoc' in sys.modules:
-        sys.modules.pop('_ipydoc')
-    _ipydoc = imp.load_module('_ipydoc', *imp.find_module('pydoc'))
-    _ipydoc.getdoc =  GetDoc(*args).getdoc
+def get_fake_module(module_name, base_module_name):
+    import imp, sys
+    if module_name in sys.modules:
+        sys.modules.pop(module_name)
+    return imp.load_module(module_name, *imp.find_module(base_module_name))
+
+
+def dump_catalog(module_names, *args, **kwargs):
+    fake_module = get_fake_module('_ipydoc_dump', 'pydoc')
+    distiller = DocDistiller(*args, **kwargs)
+    fake_module.getdoc = distiller.getdoc
+    help = fake_module.Helper(None, None)
+    for module_name in module_names:
+        help(module_name)
+    distiller.dump_docs()
+
+
+def install(*args, **kwargs):
+    _ipydoc = get_fake_module('_ipydoc', 'pydoc')
+    _ipydoc.getdoc =  GetDoc(*args, **kwargs).getdoc
+    import __builtin__
     __builtin__.ihelp = _ipydoc.Helper(sys.stdin, sys.stdout)
-    del imp, __builtin__
+    del __builtin__
 
 
-install()
+if __name__=='__main__':
+    pass
+else:
+    install()
