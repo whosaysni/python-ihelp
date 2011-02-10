@@ -1,56 +1,61 @@
 import hashlib, inspect, locale, logging, operator, os, pydoc, re, sys, warnings
 
-# At default, ihelp files are located under ~/.ihelp.
-PY_IHELP_ROOT = os.path.join(os.path.expanduser('~'), '.ihelp')
 
+class DocstringTranslationObsoleted(Warning):
+    pass
+warnings.filterwarnings('once', category=DocstringTranslationObsoleted)
+
+# language pack name format: ihelp_ja_JP__pkgname
 
 class GetDoc(object):
-    def __init__(self,
-                 language=(locale.getlocale()[0]
-                           or locale.getdefaultlocale()[0]),
+    
+    @classmethod
+    def _reset_ihelp_docs(cls):
+        cls.ihelp_docs = {}
+
+    def _load_ihelp_docs(cls, language):
+        prefix = 'ihelp_'+language
+        for module_name in sys.modules.keys():
+            module = __import__(module_name)
+            cls.ihelp_docs.update(getattr(module, 'ihelp', {}))
+    
+    def __init__(self, language=(locale.getlocale()[0]
+                                 or locale.getdefaultlocale()[0]),
                  ignore_cache=False, _getdoc=None):
         """Initializer.
         """
         self.language = language
-        self.cache = None if ignore_cache else {}
+        if ignore_cache:
+            self.cache = None
+        else:
+            self.cache = {}
         if _getdoc is None:
             import pydoc
             _getdoc = pydoc.getdoc
         self._getdoc = _getdoc
 
-    def get_catalog_filename(self, package_name):
-        return os.path.join(
-            PY_IHELP_ROOT, '%s.%s.ihelp' %(package_name, self.language))
-
-    def load_catalog(self, package_name):
+    def load_catalog(self, package_name, language=None):
         """Load a catalog corresponding to package_name
         """
-        catalog_fn = self.get_catalog_filename(package_name)
-        catalog = {}
-        if os.path.exists(catalog_fn):
-            try:
-                catalog = eval(
-                    unicode(open(catalog_fn, 'rb').read(), 'utf-8', 'ignore'),
-                    dict(__builtins__=None, True=True, False=False), None)
-            except:
-                warnings.warn(u'Unable to load catalog: %s' %(catalog_fn))
-                catalog = {}
+        if language is None:
+            language = str(self.language)
+        key_tuple = (package_name, language)
+        # simply return if catalog is already loaded.
+        if self.cache and key_tuple in self.cache.keys():
+            return self.cache[key_tuple]
+        # ... else try to load catalog.
+        catalog_modname = 'ihelp_%s__%s' %(package_name, language)
+        try:
+            catalog_module = __import__(catalog_modname)
+        except ImportError:
+            warnings.warn(u'Unable to load catalog module: %s' %(catalog_modname))
+            catalog_module = None
+        if catalog_module:
+            catalog = catalog_module.ihelp
+            if self.cache is not None:
+                self.cache[(package_name, language)] = catalog
         else:
             catalog = {}
-        # store loaded catalog to cache, if enabled.
-        if self.cache is not None:
-            self.cache[package_name] = catalog
-        return catalog
-
-    def get_catalog(self, package_name):
-        """Get a catalog, using cache if enabled.
-        """
-        if self.cache is None:
-            catalog = self.load_catalog(package_name)
-        else:
-            if package_name not in self.cache:
-                self.cache[package_name] = self.load_catalog(package_name)
-            catalog = self.cache[package_name]
         return catalog
 
     def resolve_object_path(self, obj):
@@ -99,9 +104,9 @@ class GetDoc(object):
     def get_signature(self, doc):
         return hashlib.md5(doc).hexdigest()
 
-    def get_translation(self, package_name, object_name, doc):
-        # now we have the catalog, try translation.
-        catalog = self.get_catalog(package_name)
+    def get_translation(self, package_name, object_name, doc, language=None):
+        catalog = self.load_catalog(package_name, language)
+        # now we have the catalog, try to translate.
         if catalog:
             if object_name in catalog:
                 last_valid = None
@@ -115,20 +120,27 @@ class GetDoc(object):
                             break
                 # if no signatures match, use last valid translation.
                 if last_valid:
+                    # signature is diffrent to the catalog. Warning required.
                     doc = last_valid
-                    # TBD: The document may be obsolete here --
-                    # signature is diffrent to the catalog. Notification required.
+                    warning.warn('Translated docstring found in ihelp catalog, '
+                                 'but it is for different version of module. '
+                                 'Showing it anyway...', category=DocstringTranslationObsoleted)
         return doc
 
-    def getdoc(self, obj):
+    def getdoc(self, obj, language=None):
         """Get the doc string or comments for an object."""
         # get original document.
         doc = self._getdoc(obj)
-        # first, build unique path for object.
+        # build unique path for object.
         package_name, object_name = self.resolve_object_path(obj)
-        # second, lookup catalog for package_name and language.
-        doc = self.get_translation(package_name, object_name, doc)
-        return re.sub('^ *\n', '', doc.rstrip()) if doc else ''
+        # look catalog for package_name and language.
+        idoc = self.get_translation(package_name, object_name, doc, language)
+        # strips leading blank line
+        if idoc:
+            idoc = re.sub('^ *\n', '', idoc.rstrip())
+        else:
+            idoc = ''
+        return idoc
 
 
 class DocDistiller(GetDoc):
@@ -182,29 +194,48 @@ class DocDistiller(GetDoc):
                 self.dump_catalog(package_name, catalog)
 
 
-def get_fake_module(module_name, base_module_name):
+def shadow_module(module_name, shadow_name):
+    """Shadows a module with given shadow_name.
+    """
     import imp, sys
+    # always purges existing module under the shadow_name
     if module_name in sys.modules:
         sys.modules.pop(module_name)
     return imp.load_module(module_name, *imp.find_module(base_module_name))
 
 
 def dump_catalog(module_names, *args, **kwargs):
-    fake_module = get_fake_module('_ipydoc_dump', 'pydoc')
+    """Dumps catalog.
+    """
+    try:
+        from cStringIO import StringIO
+    except ImportError:
+        from StringIO import StringIO
+    # initialize docstring distiller.
     distiller = DocDistiller(*args, **kwargs)
-    fake_module.getdoc = distiller.getdoc
-    from StringIO import StringIO
-    help = fake_module.Helper(StringIO(), StringIO())
+    # set up shadowed module.
+    shadow_name = '_ipydoc_dump'
+    shadowed_module = shadow_module('pydoc', shadow_name)
+    shadowed_module.getdoc = distiller.getdoc
+    help = shadowed_module.Helper(StringIO(), StringIO())
+    # queue docstrings into overriden getdoc().
     for module_name in module_names:
         help(module_name)
+    # distill and dump.
     distiller.dump_docs()
+    # teardown, purging shadowed module.
+    del shadowed_module
+    sys.modules.pop(shadow_name)
 
 
 def install(*args, **kwargs):
-    _ipydoc = get_fake_module('_ipydoc', 'pydoc')
+    """Installs ihelp.
+    """
+    _ipydoc = shadow_module('pydoc', '_ipydoc')
     _ipydoc.getdoc = GetDoc(*args, **kwargs).getdoc
+    # installs ihelp under __builtin__ namespace.
     import __builtin__
     __builtin__.ihelp = _ipydoc.Helper(sys.stdin, sys.stdout)
     del __builtin__
 
-install()
+# install()
