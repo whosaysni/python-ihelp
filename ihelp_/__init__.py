@@ -1,9 +1,15 @@
-import hashlib, inspect, locale, logging, operator, os, pydoc, re, sys, warnings
+# coding: utf-8
+# Copyright (c) 2010, 2011 Yasushi Masuda All rights reserved.
+"""python-ihelp: i18n version of help().
+"""
+import hashlib, inspect, locale, operator, os, pydoc, re, sys, warnings
 
 
-class DocstringTranslationObsoleted(Warning):
+class IHelpWarning(Warning):
+    """Warning generated in ihelp.
+    """
     pass
-warnings.filterwarnings('once', category=DocstringTranslationObsoleted)
+warnings.filterwarnings('once', category=IHelpWarning)
 
 # language pack name format: ihelp_ja_JP__pkgname
 
@@ -48,7 +54,8 @@ class GetDoc(object):
         try:
             catalog_module = __import__(catalog_modname)
         except ImportError:
-            warnings.warn(u'Unable to load catalog module: %s' %(catalog_modname))
+            sys.stderr.write('Warning: unable to load catalog module: %s'
+                             %(catalog_modname))
             catalog_module = None
         if catalog_module:
             catalog = catalog_module.ihelp
@@ -124,10 +131,10 @@ class GetDoc(object):
                     if last_valid:
                         # signature is diffrent to the catalog. Warning required.
                         doc = last_valid
-                        warnings.warn('Translated docstring found in ihelp catalog, '
-                                      'but it is for different version of module. '
-                                      'Showing it anyway...',
-                                      category=DocstringTranslationObsoleted)
+                        sys.stderr.write(
+                            'Warning: translated docstring found in ihelp '
+                            'catalog, but it is for different version of '
+                            'module. Showing it anyway...')
         return doc
 
     def getdoc(self, obj, language=None):

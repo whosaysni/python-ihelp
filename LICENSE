@@ -2,7 +2,7 @@
 License notice
 ==================
 
-Parts of this module derives code from pydoc.py, which comes from
+Part of this module derives code from pydoc.py, which comes from
 Python distribution. See http://www.python.org/doc/2.6.4/license.html.
 (This distribution also includes a copy of Python license as 
 python_license.txt.)
