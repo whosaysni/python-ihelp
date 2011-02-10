@@ -44,7 +44,7 @@ class GetDoc(object):
         if self.cache and key_tuple in self.cache.keys():
             return self.cache[key_tuple]
         # ... else try to load catalog.
-        catalog_modname = 'ihelp_%s__%s' %(package_name, language)
+        catalog_modname = 'ihelp_%s__%s' %(language, package_name)
         try:
             catalog_module = __import__(catalog_modname)
         except ImportError:
@@ -110,21 +110,24 @@ class GetDoc(object):
         if catalog:
             if object_name in catalog:
                 last_valid = None
+                doc_signature = self.get_signature(doc)
                 for signature, valid, translated in catalog[object_name]:
                     # translation should be valid and...
                     if valid:
                         last_valid = translated
                         # ... its signature should match.
-                        if signature==self.get_signature(doc):
-                            doc = translated
+                        if signature==doc_signature:
+                            doc = last_valid
                             break
                 # if no signatures match, use last valid translation.
-                if last_valid:
-                    # signature is diffrent to the catalog. Warning required.
-                    doc = last_valid
-                    warning.warn('Translated docstring found in ihelp catalog, '
-                                 'but it is for different version of module. '
-                                 'Showing it anyway...', category=DocstringTranslationObsoleted)
+                else:
+                    if last_valid:
+                        # signature is diffrent to the catalog. Warning required.
+                        doc = last_valid
+                        warnings.warn('Translated docstring found in ihelp catalog, '
+                                      'but it is for different version of module. '
+                                      'Showing it anyway...',
+                                      category=DocstringTranslationObsoleted)
         return doc
 
     def getdoc(self, obj, language=None):
@@ -199,9 +202,9 @@ def shadow_module(module_name, shadow_name):
     """
     import imp, sys
     # always purges existing module under the shadow_name
-    if module_name in sys.modules:
-        sys.modules.pop(module_name)
-    return imp.load_module(module_name, *imp.find_module(base_module_name))
+    if shadow_name in sys.modules:
+        sys.modules.pop(shadow_name)
+    return imp.load_module(shadow_name, *imp.find_module(module_name))
 
 
 def dump_catalog(module_names, *args, **kwargs):
@@ -238,4 +241,4 @@ def install(*args, **kwargs):
     __builtin__.ihelp = _ipydoc.Helper(sys.stdin, sys.stdout)
     del __builtin__
 
-# install()
+install()
