@@ -54,8 +54,8 @@ class GetDoc(object):
         try:
             catalog_module = __import__(catalog_modname)
         except ImportError:
-            sys.stderr.write('Warning: unable to load catalog module: %s\n'
-                             %(catalog_modname))
+            #sys.stderr.write('Warning: unable to load catalog module: %s\n'
+            #                 %(catalog_modname))
             catalog_module = None
         # if catalog_module is valid, put it to cache.
         if catalog_module:
@@ -64,8 +64,8 @@ class GetDoc(object):
                 if self.cache is not None:
                     self.cache[(package_name, language)] = catalog
             else:
-                sys.stderr.write('Warning: no ihelp in catalog: %s.\n'
-                                 %(catalog_modname))
+                #sys.stderr.write('Warning: no ihelp in catalog: %s.\n'
+                #                 %(catalog_modname))
                 catalog = {}
         else:
             catalog = {}
