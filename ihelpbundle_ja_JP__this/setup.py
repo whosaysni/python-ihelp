@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "ihelpbundle_ja_JP__this",
-    version = "0.1",
+    version = "0.1.3",
     packages = find_packages(),
 
     author = 'Yasushi Masuda',
@@ -12,5 +12,5 @@ setup(
     url = 'http://code.google.com/p/python-ihelp/',
     classifiers = [
         'Development Status :: 2 - Pre-Alpha',
-        ]
+        ],
     )
