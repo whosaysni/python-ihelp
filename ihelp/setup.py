@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "ihelp",
-    version = "0.3",
+    version = "0.3.1",
     packages = find_packages(),
     author = 'Yasushi Masuda',
     author_email = 'whosaysni@gmail.com',
