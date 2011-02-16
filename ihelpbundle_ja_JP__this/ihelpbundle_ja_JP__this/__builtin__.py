@@ -1,7 +1,7 @@
 # coding: utf-8
 
 ihelp = {
-'__builtin__': [
+'': [
 ('32a09678744d9ed4032b21861e1bbc8b', True, 
 """組み込みの関数や例外、その他のオブジェクトです。
 
@@ -852,45 +852,46 @@ B の幅が width 以下の場合でも、 B を切り詰めることはあり�
 
 
 'callable': [
-('e0acb8d383fb97d31c4b546ff4ad5401', False, 
+('e0acb8d383fb97d31c4b546ff4ad5401', True, 
 """callable(object) -> bool
 
-Return whether the object is callable (i.e., some kind of function).
-Note that classes are callable, as are instances with a __call__() method."""),
+呼出し可能オブジェクト (関数など) かどうかを判定して返します。
+クラスや、 __call__()  メソッドを持つインスタンスも呼出し可能です。"""),
 
 ],
 
 
 'chr': [
-('3aaa155c885a604312da168bc5d1768a', False, 
+('3aaa155c885a604312da168bc5d1768a', True, 
 """chr(i) -> character
 
-Return a string of one character with ordinal i; 0 <= i < 256."""),
+序数が i の文字 1 つからなる文字列を返します。i の範囲は 0 <= i < 256 です。"""),
 
 ],
 
 
 'classmethod': [
-('95f48c0bd4b38e7292e7ec21ffac72e1', False, 
+('95f48c0bd4b38e7292e7ec21ffac72e1', True, 
 """classmethod(function) -> method
 
-Convert a function to be a class method.
+関数をクラスメソッドに変換します。
 
-A class method receives the class as implicit first argument,
-just like an instance method receives the instance.
-To declare a class method, use this idiom:
+インスタンスメソッドの第一引数にインスタンスを渡すように、
+クラスメソッドの第一引数には、クラスを渡すことになっています。
+クラスメソッドを宣言するには、以下のようなイディオムを使いましょう:
 
   class C:
       def f(cls, arg1, arg2, ...): ...
       f = classmethod(f)
 
-It can be called either on the class (e.g. C.f()) or on an instance
-(e.g. C().f()).  The instance is ignored except for its class.
-If a class method is called for a derived class, the derived class
-object is passed as the implied first argument.
+クラスメソッドは、 (C.f() のような) クラスに対して呼び出す他に、
+(C().f() のような) インスタンスに対しても呼び出せます。後者の場合、
+クラスメソッドにはインスタンスのクラス以外の情報は渡りません。
+クラスメソッドをサブクラスに対して呼び出すと、第一引数にはサブクラス
+のクラスオブジェクトが渡されます。
 
-Class methods are different than C++ or Java static methods.
-If you want those, see the staticmethod builtin."""),
+クラスメソッドは C++ や Java の静的メソッドとは違います。
+静的メソッドが必要なら、組込み関数 staticmethod を使ってください。"""),
 
 ],
 
@@ -903,7 +904,7 @@ If you want those, see the staticmethod builtin."""),
 
 
 'cmp': [
-('23a0ca9ed5143f718915877e0200e2bb', False, 
+('23a0ca9ed5143f718915877e0200e2bb', True, 
 """cmp(x, y) -> integer
 
 x<y であれば負の値、 x==y ならゼロ、 x>y なら正の値を返します。"""),
@@ -912,41 +913,41 @@ x<y であれば負の値、 x==y ならゼロ、 x>y なら正の値を返し�
 
 
 'coerce': [
-('685d93d5a33f50a6aee75c7cd6ff6d30', False, 
+('685d93d5a33f50a6aee75c7cd6ff6d30', True, 
 """coerce(x, y) -> (x1, y1)
 
-Return a tuple consisting of the two numeric arguments converted to
-a common type, using the same rules as used by arithmetic operations.
-If coercion is not possible, raise TypeError."""),
+二つの数値型を引数にとり、それぞれの引数を共通の型に変換して、タプルに
+して返します。変換には数値演算の際に使われるのと同じ規則が適用されます。
+型強制が不可能なときには TypeError を送出します。"""),
 
 ],
 
 
 'compile': [
-('34d3939a9ebedafd4d19352c148e00c2', False, 
+('34d3939a9ebedafd4d19352c148e00c2', True, 
 """compile(source, filename, mode[, flags[, dont_inherit]]) -> code object
 
-Compile the source string (a Python module, statement or expression)
-into a code object that can be executed by the exec statement or eval().
-The filename will be used for run-time error messages.
-The mode must be \'exec\' to compile a module, \'single\' to compile a
-single (interactive) statement, or \'eval\' to compile an expression.
-The flags argument, if present, controls which future statements influence
-the compilation of the code.
-The dont_inherit argument, if non-zero, stops the compilation inheriting
-the effects of any future statements in effect in the code calling
-compile; if absent or zero these statements do influence the compilation,
-in addition to any features explicitly specified."""),
+ソースコード文字列 (Python モジュールや実行文、式) をコンパイルして、
+exec 文や eval() で実行可能なコードオブジェクトに変換します。
+filename 引数は、実行時のエラーメッセージに使われます。
+mode 引数は、モジュールをコンパイルする場合は \'exec\' に、単一の
+(対話的に実行する) 式の場合は \'single\' に、式の場合には \'eval\' にします。
+flags 引数を指定すると、コードのコンパイルにどの future 文を影響させる
+かを制御できます。
+dont_inherit 引数をゼロでない値にすると、 compile を呼び出す側の
+コードで有効になっている future 文の効果をコンパイル処理に影響させません。
+dont_inherit を省略したり、ゼロを指定すると、呼び出し側の future と、
+明示的に指定した future の両方を考慮したコンパイルが実行されます。"""),
 
 ],
 
 
 'complex': [
-('8fdc26fdd4e52b9e7f6867c06caeadbb', False, 
+('8fdc26fdd4e52b9e7f6867c06caeadbb', True, 
 """complex(real[, imag]) -> complex number
 
-Create a complex number from a real part and an optional imaginary part.
-This is equivalent to (real + imag*1j) where imag defaults to 0."""),
+引数に指定した実数部と虚数部 (省略可) から、複素数を生成します。
+imag のデフォルト値を 0 としたときの (real + imag*1j) と同じです。"""),
 
 ],
 
@@ -1106,91 +1107,90 @@ This is equivalent to (real + imag*1j) where imag defaults to 0."""),
 
 
 'complex.__rpow__': [
-('bcab33856c7f1ac53d2945d8680042a0', False, 
+('bcab33856c7f1ac53d2945d8680042a0', True, 
 """y.__rpow__(x[, z]) <==> pow(x, y[, z])"""),
 
 ],
 
 
 'complex.__rsub__': [
-('38c09ada0390bc15efda2fda66cf5bf0', False, 
+('38c09ada0390bc15efda2fda66cf5bf0', True, 
 """x.__rsub__(y) <==> y-x"""),
 
 ],
 
 
 'complex.__rtruediv__': [
-('d27e2573016197cc6beff9a155d1a605', False, 
+('d27e2573016197cc6beff9a155d1a605', True, 
 """x.__rtruediv__(y) <==> y/x"""),
 
 ],
 
 
 'complex.__sub__': [
-('f311f7fcb90645e03097a51bf2c3ae3b', False, 
+('f311f7fcb90645e03097a51bf2c3ae3b', True, 
 """x.__sub__(y) <==> x-y"""),
 
 ],
 
 
 'complex.__truediv__': [
-('a3b7c4cb9a3324a0fef052ee4d9d94aa', False, 
+('a3b7c4cb9a3324a0fef052ee4d9d94aa', True, 
 """x.__truediv__(y) <==> x/y"""),
 
 ],
 
 
 'complex.conjugate': [
-('2a74d1aaa72c84eeed0f96a5b66d7b10', False, 
+('2a74d1aaa72c84eeed0f96a5b66d7b10', True, 
 """complex.conjugate() -> complex
 
-Returns the complex conjugate of its argument. (3-4j).conjugate() == 3+4j."""),
+共役複素数を返します。 (3-4j).conjugate() == 3+4j です。"""),
 
 ],
 
 
 'complex.imag': [
-('d213520f337cea7606f1f1c12f1dc6b5', False, 
-"""the imaginary part of a complex number"""),
+('d213520f337cea7606f1f1c12f1dc6b5', True, 
+"""複素数の虚数部です。"""),
 
 ],
 
 
 'complex.real': [
-('72d30dc49502e1a2aa13e8eaa71c378e', False, 
-"""the real part of a complex number"""),
+('72d30dc49502e1a2aa13e8eaa71c378e', True, 
+"""複素数の実数部です。"""),
 
 ],
 
 
 'delattr': [
-('abfa80e4675ac0e02f0a4d094db82aac', False, 
+('abfa80e4675ac0e02f0a4d094db82aac', True, 
 """delattr(object, name)
 
-Delete a named attribute on an object; delattr(x, \'y\') is equivalent to
-``del x.y\'\'."""),
+指定のアトリビュートをオブジェクトから除去します。 delattr(x, \'y\') は
+``del x.y\'\' と同じです。"""),
 
 ],
 
 
 'dict': [
-('9238be977c1078e74c44b788df64ff12', False, 
-"""dict() -> new empty dictionary.
-dict(mapping) -> new dictionary initialized from a mapping object\'s
-    (key, value) pairs.
-dict(seq) -> new dictionary initialized as if via:
+('9238be977c1078e74c44b788df64ff12', True, 
+"""dict() -> 新しい空の辞書
+dict(mapping) -> 新しい辞書を生成し、 mapping オブジェクトのキー/値ペアを使って初期化します。
+dict(seq) -> 新しい辞書を生成し、以下のような初期化を行います:
     d = {}
     for k, v in seq:
         d[k] = v
-dict(**kwargs) -> new dictionary initialized with the name=value pairs
-    in the keyword argument list.  For example:  dict(one=1, two=2)"""),
+dict(**kwargs) -> 新しい辞書を生成し、キーワード引数リストの name=value ペア
+    で初期化します。例えば、 dict(one=1, two=2) のように使います。"""),
 
 ],
 
 
 'dict.__contains__': [
-('3ae9b76c73affdb702443dd78fb6d5be', False, 
-"""D.__contains__(k) -> True if D has a key k, else False"""),
+('3ae9b76c73affdb702443dd78fb6d5be', True, 
+"""D.__contains__(k) -> D にキー k があれば True を、そうでなければ False を返します。"""),
 
 ],
 
@@ -1231,22 +1231,22 @@ dict(**kwargs) -> new dictionary initialized with the name=value pairs
 
 
 'dict.__sizeof__': [
-('12ac8b3ffc4d31d93ee2c8dfd8fd858a', False, 
-"""D.__sizeof__() -> size of D in memory, in bytes"""),
+('12ac8b3ffc4d31d93ee2c8dfd8fd858a', True, 
+"""D.__sizeof__() -> D のメモリ上のサイズをバイト単位で返します"""),
 
 ],
 
 
 'dict.clear': [
-('9546c06e700fba8cdef2d89c2575c583', False, 
-"""D.clear() -> None.  Remove all items from D."""),
+('9546c06e700fba8cdef2d89c2575c583', True, 
+"""D.clear() -> None. D から全ての要素を除去します。"""),
 
 ],
 
 
 'dict.copy': [
-('1143fdf2e0ed3f535e98c885ff04df13', False, 
-"""D.copy() -> a shallow copy of D"""),
+('1143fdf2e0ed3f535e98c885ff04df13', True, 
+"""D.copy() -> D の浅いコピー"""),
 
 ],
 
