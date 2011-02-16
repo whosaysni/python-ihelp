@@ -57,13 +57,14 @@ class GetDoc(object):
         _debug("GetDoc(language='%s', ignore_cache=%s, _getdoc=%s)",
                language, ignore_cache, _getdoc)
 
-    def load_catalog(self, package_name, language=None):
+    def load_catalog(self, package_name, language=None, kind='ihelp'):
         """Loads a catalog corresponding to package_name.
         """
-        _debug("Loading catalog: '%s', lang=%s", package_name, language)
+        _debug("Loading %s catalog: '%s', lang=%s",
+               kind, package_name, language)
         if language is None:
             language = str(self.language)
-        key_tuple = (package_name, language)
+        key_tuple = (package_name, language, kind)
         # simply return if catalog is already loaded.
         if self.cache and key_tuple in self.cache.keys():
             cache_hit = self.cache[key_tuple]
@@ -80,10 +81,10 @@ class GetDoc(object):
             catalog_module = None
         # if catalog_module is valid, put it to cache.
         if catalog_module:
-            if hasattr(catalog_module, 'ihelp'):
+            if hasattr(catalog_module, kind):
                 catalog = catalog_module.ihelp
                 if self.cache is not None:
-                    self.cache[(package_name, language)] = catalog
+                    self.cache[(package_name, language, kind)] = catalog
             else:
                 #sys.stderr.write('Warning: no ihelp in catalog: %s.\n'
                 #                 %(catalog_modname))
@@ -131,7 +132,7 @@ class GetDoc(object):
                 if catalog_module:
                     if hasattr(catalog_module, 'ihelp'):
                         catalog = catalog_module.ihelp
-                        bundled_catalogs[(package_name, language)] = catalog
+                        bundled_catalogs[(package_name, language, 'ihelp')] = catalog
                     else:
                         sys.stderr.write('Warning: no ihelp in catalog module: %s\n'
                                          %(catalog_modname))
@@ -203,8 +204,9 @@ class GetDoc(object):
                 # translation should be valid and...
                 if valid:
                     last_valid = translated
-                    # ... its signature should match.
-                    if signature==doc_signature:
+                    # signature is None (use this translation anyway)
+                    # ... or signature matches.
+                    if signature in [None, doc_signature]:
                         doc = last_valid
                         break
             # if no signatures match, use last valid translation.
@@ -237,25 +239,25 @@ class GetDoc(object):
         return idoc
 
 
-def shadow_module(module_name, shadow_name):
-    """Shadows a module with given shadow_name.
-    """
-    import imp, sys
-    # always purges existing module under the shadow_name
-    if shadow_name in sys.modules:
-        sys.modules.pop(shadow_name)
-    return imp.load_module(shadow_name, *imp.find_module(module_name))
-
-
 def install(name, *args, **kwargs):
     """Installs ihelp.
     """
-    _ipydoc = shadow_module('pydoc', '_ipydoc')
-    gd = GetDoc(*args, **kwargs)
-    _ipydoc.getdoc = gd.getdoc
+    import imp, sys
+    # create getdoc instance
+    getdoc_instance = GetDoc(*args, **kwargs)
+    if '_ipydoc' in sys.modules:
+        sys.modules.pop('_ipydoc')
+    modfile = None
+    try:
+        modfile, fname, desc = imp.find_module('pydoc')
+        ipydoc = imp.load_module('_ipydoc', modfile, '_ipydoc', desc)
+    finally:
+        if modfile:
+            modfile.close()
+    ipydoc.getdoc = getdoc_instance.getdoc
     # installs ihelp under __builtin__ namespace.
     import __builtin__
-    setattr(__builtin__, name, _ipydoc.Helper(sys.stdin, sys.stdout))
+    setattr(__builtin__, name, ipydoc.Helper(sys.stdin, sys.stdout))
 
 
 install('ihelp')
