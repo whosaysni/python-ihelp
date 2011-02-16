@@ -6,14 +6,29 @@ python-ihelp: i18n version of help().
 Language pack name format: ihelp_<language>__<package_name>
 
 """
-import hashlib, inspect, locale, operator, os, pydoc, re, sys, warnings
+import __builtin__
+import hashlib, inspect, locale, logging, operator, os, re, sys, warnings
 
 
+# logger settings
+DEBUG = False
+_logger = None
+def _debug(*args):
+    """Internal debug function.
+    """
+    if DEBUG==False:
+        return
+    global _logger
+    if _logger is None:
+        import logging
+        _logger = logging.getLogger('ihelp')
+    return _logger.debug(*args)
+
+# exception
 class IHelpWarning(Warning):
     """Warning generated in ihelp.
     """
     pass
-
 warnings.filterwarnings('once', category=IHelpWarning)
 
 
@@ -39,16 +54,22 @@ class GetDoc(object):
         # load special (builtin) bundle.
         if not (self.cache is None):
             self.cache.update(self.load_catalog_bundle('this', language))
+        _debug("GetDoc(language='%s', ignore_cache=%s, _getdoc=%s)",
+               language, ignore_cache, _getdoc)
 
     def load_catalog(self, package_name, language=None):
         """Loads a catalog corresponding to package_name.
         """
+        _debug("Loading catalog: '%s', lang=%s", package_name, language)
         if language is None:
             language = str(self.language)
         key_tuple = (package_name, language)
         # simply return if catalog is already loaded.
         if self.cache and key_tuple in self.cache.keys():
-            return self.cache[key_tuple]
+            cache_hit = self.cache[key_tuple]
+            _debug("Catalog returned from cache at %s of type: %s",
+                   id(cache_hit), type(cache_hit))
+            return cache_hit
         # ... else, try to load catalog.
         catalog_modname = 'ihelp_%s__%s' %(language, package_name)
         try:
@@ -74,21 +95,26 @@ class GetDoc(object):
     def load_catalog_bundle(self, bundle_name, language):
         """Loads bundle-type catalog.
         """
+        _debug("Loading catalog bundle '%s', lang=%s", bundle_name, language)
         if language is None:
             language = str(self.language)
         # try to load bundle.
         bundle_modname = 'ihelpbundle_%s__%s' %(language, bundle_name)
         try:
             bundle_module = __import__(bundle_modname)
+            _debug("Catalog bundle loaded: %s", bundle_module)
         except ImportError:
             sys.stderr.write('Warning: unable to load catalog bundle module: %s\n'
                              %(bundle_modname))
             bundle_module = None
+            _debug("Failed to load catalog bundle: '%s', lang=%s",
+                   bundle_name, language)
         # if bundle_module is valid, load bundled catalog.
         bundled_catalogs = {}
         if bundle_module:
             if hasattr(bundle_module, 'package_names'):
                 package_names = bundle_module.package_names
+                _debug("Catalog bundle: package_names=%s", package_names)
             else:
                 sys.stderr.write('Warning: could not find package_names in bundle: %s.\n'
                                  %(bundle_modname))
@@ -114,49 +140,58 @@ class GetDoc(object):
     def resolve_object_path(self, obj):
         """Determines package and name for given object.
         """
-        module_path_bits, object_name = [], None
-        if inspect.ismethoddescriptor(obj):
-            # avoid failing getmodule for method descriptors
-            mod = None
-        else:
-            mod = inspect.getmodule(obj)
-        if mod is not None:
-            # non-null module should have ordinal module path.
-            module_path_bits = str(mod.__name__).split('.')
+        _debug("Resolving object at %s of type:%s", id(obj), type(obj))
+        mod_name, obj_name = None, None
+        def get_mod_name(obj_, cls_, name_):
+            # __doc__ may be provided in any base class.
+            for base in reversed(getattr(cls_, '__bases__', [])):
+                if (hasattr(base, name_) and
+                    hasattr(getattr(base, name_), '__doc__') and
+                    getattr(base, name_).__doc__==self._getdoc(obj)):
+                    mod_name_ = inspect.getmodule(base).__name__
+            return inspect.getmodule(cls_).__name__
+        
+        if inspect.ismodule(obj):
+            _debug('INSPECT: object is a module.')
+            # obj represents a module
+            mod_name = obj.__name__
+            obj_name = ''
+        elif inspect.isclass(obj):
+            _debug('INSPECT: object is a class.')
+            mod_name = obj.__module__
+            obj_name = obj.__name__
         elif hasattr(obj, '__objclass__'):
-            # those methods having __objclass__ can be specified as
-            # "<__objclass__ module name>.<__objclass__ name>.<method name>".
-            if hasattr(obj, '__name__'):
-                # if obj has its own __name__
-                # look for __doc__ in base classes
-                for cls in reversed(getattr(obj.__objclass__, '__bases__', [])):
-                    if (hasattr(cls, obj.__name__) and
-                        hasattr(getattr(cls, obj.__name__), '__doc__') and
-                        getattr(cls, obj.__name__).__doc__==self._getdoc(obj)):
-                        module_path_bits = (
-                            str(inspect.getmodule(cls).__name__).split('.')+
-                            cls.__name__.split('.'))
-                        object_name = '.'.join(module_path_bits[1:]+[obj.__name__])
-            # else, derive names from obj.__objclass__
-            else:
-                module_path_bits = (
-                    str(inspect.getmodule(obj.__objclass__).__name__).split('.')+
-                    obj.__objclass__.__name__.split('.'))
-        elif hasattr(obj, 'im_class'):
-            # not sure if this path is used... Just for completeness.
-            # "<im_class's module>.<im_class' name>".
-            module_path_bits = (
-                str(inspect.getmodule(obj.im_class).__name__).split('.'))
-        elif obj in vars(operator).values():
-            # for builtin operators, use "__builtin__.object.<method name>".
-            module_path_bits = ['__builtin__', 'object']
+            _debug('INSPECT: object is an attrubute of class, resolved via __objclass__.')
+            # object is bound as an attribute to some class.
+            cls = obj.__objclass__
+            obj_name = cls.__name__+'.'+obj.__name__
+            mod_name = get_mod_name(obj, cls, obj_name)
+        elif hasattr(obj, '__class__'):
+            _debug('INSPECT: object is an attrubute of class, resolved via __objclass__.')
+            cls = obj.__class__
+            obj_name = cls.__name__+'.'+obj.__name__
+            mod_name = get_mod_name(obj, cls, obj_name)
         else:
+            _debug('INSPECT: object is something else.')
             # here, just give up understanding slithy internals.
-            module_path_bits = ['__undefined__']
-        package_name = module_path_bits[0] if module_path_bits else ''
-        if object_name is None:
-            object_name = '.'.join(module_path_bits[1:] + [obj.__name__])
-        return package_name, object_name
+            try:
+                mod_name = inspect.getmodule(obj).__name__
+                _debug('INSPECT: tried mod_name, %s', mod_name)
+            except:
+                pass
+            try:
+                obj_name = obj.__name__
+                _debug('INSPECT: tried obj_name, %s', obj_name)
+            except:
+                pass
+
+        if obj_name == None:
+            raise ValueError('Failed to determine name for object at %s of type %s, attrs=%s' %(id(obj), type(obj), dir(obj)))
+        if mod_name == None:
+            raise ValueError('Failed to determine module name for object %s at %s of type %s, attrs=%s' %(obj_name, id(obj), type(obj), dir(obj)))
+
+        _debug('INSPECTED: module %s, name %s', mod_name, obj_name)
+        return mod_name, obj_name
 
     def get_translation(self, package_name, object_name, doc, language=None):
         catalog = self.load_catalog(package_name, language)
@@ -185,6 +220,9 @@ class GetDoc(object):
 
     def getdoc(self, obj, language=None):
         """Get the doc string or comments for an object."""
+        # laguage defaults to self.language.
+        if language is None:
+            language = self.language
         # get original document.
         doc = self._getdoc(obj)
         # build unique path for object.
@@ -209,14 +247,15 @@ def shadow_module(module_name, shadow_name):
     return imp.load_module(shadow_name, *imp.find_module(module_name))
 
 
-def install(*args, **kwargs):
+def install(name, *args, **kwargs):
     """Installs ihelp.
     """
     _ipydoc = shadow_module('pydoc', '_ipydoc')
-    _ipydoc.getdoc = GetDoc(*args, **kwargs).getdoc
+    gd = GetDoc(*args, **kwargs)
+    _ipydoc.getdoc = gd.getdoc
     # installs ihelp under __builtin__ namespace.
     import __builtin__
-    __builtin__.ihelp = _ipydoc.Helper(sys.stdin, sys.stdout)
-    del __builtin__
+    setattr(__builtin__, name, _ipydoc.Helper(sys.stdin, sys.stdout))
 
-install()
+
+install('ihelp')

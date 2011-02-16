@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
 setup(
-    name = "ihelp_",
-    version = "0.2.1",
+    name = "ihelp",
+    version = "0.3",
     packages = find_packages(),
-
     author = 'Yasushi Masuda',
     author_email = 'whosaysni@gmail.com',
     description = 'i18n help() engine.',
