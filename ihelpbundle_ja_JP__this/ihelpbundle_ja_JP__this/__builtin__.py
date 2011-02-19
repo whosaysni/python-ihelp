@@ -1202,621 +1202,569 @@ dict(**kwargs) は新しい辞書を生成し、キーワード引数リスト�
 
 
 'dict.popitem': [
-('cc789df112f946dedf181cb260a9ea65', False, 
-"""D.popitem() -> (k, v), remove and return some (key, value) pair as a
-2-tuple; but raise KeyError if D is empty."""),
+('cc789df112f946dedf181cb260a9ea65', True, 
+"""D.popitem() -> (k, v)
+
+辞書から (key, value) のペアを一つ除去して、タプルで返します。 D が空の場合には KeyError を送出します。"""),
 
 ],
 
 
 'dict.setdefault': [
-('3a8968f12c975ca01ec1da7f4900c2cf', False, 
-"""D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D"""),
+('3a8968f12c975ca01ec1da7f4900c2cf', True, 
+"""D.setdefault(k[,d]) は D.get(k,d) と似ていますが、 k が D 上にない場合は D[k]=d を実行します。"""),
 
 ],
 
 
 'dict.update': [
 ('cfdabf685ef7a5b48002b849c4b11fd1', True, 
-"""D.update(E, **F) -> None.  D の要素を、辞書または iterable の
-E と F で更新します。
+"""D.update(E, **F) -> None.  D の要素を、辞書または iterable の E と F で更新します。
 
-E が .keys() メソッドを持つ場合には:     for k in E: D[k] = E[k]
-E が .keys() メソッドを持たない場合:     for (k, v) in E: D[k] = v
-です。どちらの場合も、続いて:            for k in F: D[k] = F[k]
-を適用します。"""),
+E が .keys() メソッドを持つ場合は for k in E: D[k] = E[k], E が .keys() メソッドを持たない場合は for (k, v) in E: D[k] = v です。どちらの場合も、続いて for k in F: D[k] = F[k] を適用します。"""),
 
 ],
 
 
 'dict.values': [
-('4d952e41ba4471f0db851d49d232817c', False, 
-"""D.values() -> list of D\'s values"""),
+('4d952e41ba4471f0db851d49d232817c', True, 
+"""D.values() は D の値からなるリストを返します。"""),
 
 ],
 
 
 'dir': [
-('7b0a438a8951a13885c4b4217185fca4', False, 
-"""dir([object]) -> list of strings
+('7b0a438a8951a13885c4b4217185fca4', True, 
+"""dir([object]) -> 文字列のリスト
 
-If called without an argument, return the names in the current scope.
-Else, return an alphabetized list of names comprising (some of) the attributes
-of the given object, and of attributes reachable from it.
-If the object supplies a method named __dir__, it will be used; otherwise
-the default dir() logic is used and returns:
-  for a module object: the module\'s attributes.
-  for a class object:  its attributes, and recursively the attributes
-    of its bases.
-  for any other object: its attributes, its class\'s attributes, and
-    recursively the attributes of its class\'s base classes."""),
+引数なしで呼び出すと、スコープ中の名前のリストを返します。
+引数を指定した場合、引数に指定したオブジェクトの（一部の）アトリビュートと、オブジェクトを介してアクセスできるアトリビュートの名前からなるアルファベット順のリストを返します。
+オブジェクトが __dir__ メソッドを備えている場合、名前の取得に __dir__ を使います。それ以外の場合には、以下のようなロジックを使います:
+  モジュールオブジェクトの場合は、モジュールのアトリビュートを返します。
+  クラスオブジェクトの場合には、クラスのアトリビュートの他に、ベースクラスのアトリビュートを再帰的に探索して返します。
+  それ以外のオブジェクトの場合は、オブジェクトのアトリビュート、オブジェクトのクラスのアトリビュートの他に、ベースクラスのアトリビュートを再帰的に探索して返します。"""),
 
 ],
 
 
 'divmod': [
-('5326c344b2ab3a384c588f19def9e91a', False, 
+('5326c344b2ab3a384c588f19def9e91a', True, 
 """divmod(x, y) -> (div, mod)
 
-Return the tuple ((x-x%y)/y, x%y).  Invariant: div*y + mod == x."""),
+((x-x%y)/y, x%y) からなるタプルを返します。常に、 div*y + mod == x が成り立ちます。"""),
 
 ],
 
 
 'enumerate': [
-('cc07eb51e846c95be2600698c0ed7dd3', False, 
-"""enumerate(iterable) -> iterator for index, value of iterable
+('cc07eb51e846c95be2600698c0ed7dd3', True, 
+"""enumerate(iterable) はイテレータを返します。このイテレータは、引数 iterable の各値について、値のインデクスと値自体からなるタプルを返します。
 
-Return an enumerate object.  iterable must be an other object that supports
-iteration.  The enumerate object yields pairs containing a count (from
-zero) and a value yielded by the iterable argument.  enumerate is useful
-for obtaining an indexed list: (0, seq[0]), (1, seq[1]), (2, seq[2]), ..."""),
+enumerate オブジェクトを返します。 iterable はイテレーションをサポートするオブジェクトでなければなりません。 enumerate オブジェクトは、 iterable から逐次値を取り出し、 (ゼロから始まる）インデクスと値からなるタプルを生成して yield します。(0, seq[0]), (1, seq[1]), (2, seq[2]), ... のようなインデクス付きのリストを生成するときに便利です。"""),
 
 ],
 
 
 'enumerate.__iter__': [
-('448f3e7033f2161670d1a383ba662d22', False, 
+('448f3e7033f2161670d1a383ba662d22', True, 
 """x.__iter__() <==> iter(x)"""),
 
 ],
 
 
 'enumerate.next': [
-('288fd681cdf3b0a8149971d514e6e91e', False, 
-"""x.next() -> the next value, or raise StopIteration"""),
+('288fd681cdf3b0a8149971d514e6e91e', True, 
+"""x.next() は、次の値を返します。これ以上値がなければ StopIteration を送出します。"""),
 
 ],
 
 
 'eval': [
-('cc8949b142666f83448b76f4bedf78e7', False, 
+('cc8949b142666f83448b76f4bedf78e7', True, 
 """eval(source[, globals[, locals]]) -> value
 
-Evaluate the source in the context of globals and locals.
-The source may be a string representing a Python expression
-or a code object as returned by compile().
-The globals must be a dictionary and locals can be any mapping,
-defaulting to the current globals and locals.
-If only globals is given, locals defaults to it."""),
+引数 source を、現在の名前空間 globals および locals の下で評価します。 source は Python の式を記述した文字列でも、compile() の返すコードオブジェクトでもかまいません。
+globals は辞書オブジェクトでなければなりません。 locals はマッピングオブジェクトであればよく、指定しなければそれぞれ現在のグローバル名前空間およびローカル名前空間を使います。
+globals だけを指定した場合、 locals には globals と同じ値を使います。"""),
 
 ],
 
 
 'execfile': [
-('d0f3d6481e4e2e17c2389d7b4ede1b61', False, 
+('d0f3d6481e4e2e17c2389d7b4ede1b61', True, 
 """execfile(filename[, globals[, locals]])
 
-Read and execute a Python script from a file.
-The globals and locals are dictionaries, defaulting to the current
-globals and locals.  If only globals is given, locals defaults to it."""),
+ファイルから Python スクリプトを読み出して実行します。
+globals および locals は辞書で、デフォルト値はそれぞれ現在のグローバル名前空間とローカル名前空間です。
+globals だけを指定した場合、 locals には globals と同じ値を使います。"""),
 
 ],
 
 
 'file': [
-('71a981b5f58135192079e933ebc7b2fd', False, 
+('71a981b5f58135192079e933ebc7b2fd', True, 
 """file(name[, mode[, buffering]]) -> file object
 
-Open a file.  The mode can be \'r\', \'w\' or \'a\' for reading (default),
-writing or appending.  The file will be created if it doesn\'t exist
-when opened for writing or appending; it will be truncated when
-opened for writing.  Add a \'b\' to the mode for binary files.
-Add a \'+\' to the mode to allow simultaneous reading and writing.
-If the buffering argument is given, 0 means unbuffered, 1 means line
-buffered, and larger numbers specify the buffer size.  The preferred way
-to open a file is with the builtin open() function.
-Add a \'U\' to mode to open the file for input with universal newline
-support.  Any line ending in the input file will be seen as a \'
-\'
-in Python.  Also, a file so opened gains the attribute \'newlines\';
-the value for this attribute is one of None (no newline read yet),
-\'\', \'
-\', \'
-\' or a tuple containing all the newline types seen.
+ファイルを開きます。 mode には \'r\', \'w\', \'a\' を指定でき、それぞれ読み出し(デフォルト値)、書き込みおよび追記を表します。書き込みまたは追記モードでファイルを開く際、ファイルがまだ存在しなければ新たに作成されます。書き込み用にファイルを開いた場合、既存のファイルは 0 バイトに切り詰められます。ファイルをバイナリファイルとして開く場合は、モードに \'b\' を付加してください。ファイルを読み書き同時で開くときには mode に \'+\' を加えてください。
+buffering 引数を指定した場合、 0 にするとバッファリングなし、 1 にすると行単位のバッファリング、それ以上の値を指定した場合はバッファサイズを表します。
+ファイルを開くには、組み込みの open() 関数を使うよう勧めます。
+ファイルや端末入力を開くときにユニバーサル改行サポートを有効にするには \'U\' を追加してください。入力ファイル中の行末は Python 中では\'\\n\' で表されます。また、このオプションを付けてファイルを開くと、オブジェクトには \'newlines\' アトリビュートが付与されます。このアトリビュートの値は、 None (まだ改行を読み込んでいない場合)、 \'\\r\', \'\\n\', \'\\r\\n\', 読みだした改行文字の種類全てを含むタプルのいずれかをとります。
 
-\'U\' cannot be combined with \'w\' or \'+\' mode."""),
+\'U\' は \'w\' や \'+\' モードと同時には使えません。"""),
 
 ],
 
 
 'file.__enter__': [
-('6650896b429d1828f98343c5f90b9434', False, 
+('6650896b429d1828f98343c5f90b9434', True, 
 """__enter__() -> self."""),
 
 ],
 
 
 'file.__exit__': [
-('8c3d5cb3db53c2f33621725ed4e3775c', False, 
-"""__exit__(*excinfo) -> None.  Closes the file."""),
+('8c3d5cb3db53c2f33621725ed4e3775c', True, 
+"""__exit__(*excinfo) はファイルを閉じ、 None を返します。"""),
 
 ],
 
 
 'file.__iter__': [
-('448f3e7033f2161670d1a383ba662d22', False, 
+('448f3e7033f2161670d1a383ba662d22', True, 
 """x.__iter__() <==> iter(x)"""),
 
 ],
 
 
 'file.close': [
-('8b38a65ae37f66ea7ca0a021879b36bd', False, 
-"""close() -> None or (perhaps) an integer.  Close the file.
+('8b38a65ae37f66ea7ca0a021879b36bd', True, 
+"""close() はファイルを閉じ、 None または (場合によっては) 整数を返します。
 
-Sets data attribute .closed to True.  A closed file cannot be used for
-further I/O operations.  close() may be called more than once without
-error.  Some kinds of file objects (for example, opened by popen())
-may return an exit status upon closing."""),
+ファイルオブジェクトの .closed アトリビュートを True に設定します。ファイルを閉じると、それ以降の I/O 操作に使えなくなります。 close() は何度でも呼び出してよく、重複して呼び出してもエラーを起こしません。ある種のファイルオブジェクト (例えば popen() で開いたもの) は、ファイルを閉じるときに終了ステータスを返すことがあります。"""),
 
 ],
 
 
 'file.closed': [
-('14d5a2d7f1ec9ff1baa73756826f5c5b', False, 
-"""True if the file is closed"""),
+('14d5a2d7f1ec9ff1baa73756826f5c5b', True, 
+"""ファイルが閉じていれば True です。"""),
 
 ],
 
 
 'file.encoding': [
-('03fd48cbb03f5346183895a3957456c6', False, 
-"""file encoding"""),
+('03fd48cbb03f5346183895a3957456c6', True, 
+"""ファイルのエンコーディングです。"""),
 
 ],
 
 
 'file.errors': [
-('65f98260f2036a58b0409e6174ed5941', False, 
-"""Unicode error handler"""),
+('65f98260f2036a58b0409e6174ed5941', True, 
+"""Unicode エラーハンドラです。"""),
 
 ],
 
 
 'file.fileno': [
-('b138ddbf7a5f8b336c74ec3bf4a08f41', False, 
-"""fileno() -> integer \"file descriptor\".
+('b138ddbf7a5f8b336c74ec3bf4a08f41', True, 
+"""fileno() は「ファイル記述子」を表す整数を返します。
 
-This is needed for lower-level file interfaces, such os.read()."""),
+os.read() のような低水準のファイルインタフェースで必要です。"""),
 
 ],
 
 
 'file.flush': [
-('6d9a472a73bcd894996e47fb7cf6e231', False, 
-"""flush() -> None.  Flush the internal I/O buffer."""),
+('6d9a472a73bcd894996e47fb7cf6e231', True, 
+"""flush() は内部的な I/O バッファをフラッシュして None を返します。"""),
 
 ],
 
 
 'file.isatty': [
-('83b5ece024d8d4e5b84579032ea19dce', False, 
-"""isatty() -> true or false.  True if the file is connected to a tty device."""),
+('83b5ece024d8d4e5b84579032ea19dce', True, 
+"""isatty() は、ファイルが端末デバイスに接続されていれば True を返します。"""),
 
 ],
 
 
 'file.mode': [
-('6ed863ec0d41b88ff83148afb6565430', False, 
-"""file mode (\'r\', \'U\', \'w\', \'a\', possibly with \'b\' or \'+\' added)"""),
+('6ed863ec0d41b88ff83148afb6565430', True, 
+"""ファイルモードです。 (\'r\', \'U\', \'w\', \'a\', ファイルによっては \'b\' や \'+\' が付加されています)"""),
 
 ],
 
 
 'file.name': [
-('652815cf98162e882bde2fc8c2103812', False, 
-"""file name"""),
+('652815cf98162e882bde2fc8c2103812', True, 
+"""ファイル名です。"""),
 
 ],
 
 
 'file.newlines': [
-('623ee3cbbdcd9e61f883fb7d4f785233', False, 
-"""end-of-line convention used in this file"""),
+('623ee3cbbdcd9e61f883fb7d4f785233', True, 
+"""ファイル中で使われている行末の改行方法（改行文字）です。"""),
 
 ],
 
 
 'file.next': [
-('288fd681cdf3b0a8149971d514e6e91e', False, 
-"""x.next() -> the next value, or raise StopIteration"""),
+('288fd681cdf3b0a8149971d514e6e91e', True, 
+"""x.next() はファイル中の次の文字を返します。ファイルの末尾なら StopIteration を送出します。"""),
 
 ],
 
 
 'file.read': [
-('c2ce7d0489e649ef6799714132cd48c1', False, 
-"""read([size]) -> read at most size bytes, returned as a string.
+('c2ce7d0489e649ef6799714132cd48c1', True, 
+"""read([size]) は最大 size バイトまでをファイルから読み出し、文字列で返します。
 
-If the size argument is negative or omitted, read until EOF is reached.
-Notice that when in non-blocking mode, less data than what was requested
-may be returned, even if no size parameter was given."""),
+size 引数を負の値にするか省略すると、 EOF に到達するまでファイルを読みます。非ブロッキングモードでファイルを開いていると、size パラメタを指定していても、求めるサイズより小さなデータを返すことがあるので注意してください。"""),
 
 ],
 
 
 'file.readinto': [
 ('9cb9c29c58b05612f7cfac3381296711', False, 
-"""readinto() -> Undocumented.  Don\'t use this; it may go away."""),
+"""readinto() はアンドキュメンテッド機能です。使わないでください。なくなる予定です。"""),
 
 ],
 
 
 'file.readline': [
 ('e5e0d7abdcef0951b0c6248b166e408e', False, 
-"""readline([size]) -> next line from the file, as a string.
+"""readline([size]) はファイルから行読みだして文字列で返します。
 
-Retain newline.  A non-negative size argument limits the maximum
-number of bytes to return (an incomplete line may be returned then).
-Return an empty string at EOF."""),
+読み出した行の改行文字を残します。 size 引数を負でない値にすると、最大何バイトまで読み出すかを指定します (その結果、一行を完全に読み出さずにデータを返すことがあります)。EOFに到達すると空文字列を返します。"""),
 
 ],
 
 
 'file.readlines': [
 ('18093981824bed6dfd6c137be5987035', False, 
-"""readlines([size]) -> list of strings, each a line from the file.
+"""readlines([size]) はファイル中の各行からなる文字列のリストを返します。
 
-Call readline() repeatedly and return a list of the lines so read.
-The optional size argument, if given, is an approximate bound on the
-total number of bytes in the lines returned."""),
+readine() を何度も呼び出して、読み出した行データからなるリストを返します。
+オプションの size 引数は、読み出すデータの合計のバイト長のだいたいの上限を指定します。"""),
 
 ],
 
 
 'file.seek': [
-('eba52d16446dc1cd26d10330fb94ba3c', False, 
-"""seek(offset[, whence]) -> None.  Move to new file position.
+('eba52d16446dc1cd26d10330fb94ba3c', True, 
+"""seek(offset[, whence]) はファイルの読み書き位置を移動して、None を返します。
 
-Argument offset is a byte count.  Optional argument whence defaults to
-0 (offset from start of file, offset should be >= 0); other values are 1
-(move relative to current position, positive or negative), and 2 (move
-relative to end of file, usually negative, although many platforms allow
-seeking beyond the end of a file).  If the file is opened in text mode,
-only offsets returned by tell() are legal.  Use of other offsets causes
-undefined behavior.
-Note that not all file objects are seekable."""),
+引数 offset はバイト単位で指定します。オプションの引数 whence は、デフォルトでは 0 (ファイルの先頭からのオフセット。 offset >= 0 にせねばなりません) です。その他には、 1 (ファイルの現在の場所からの相対です。正負どちらの値も取れます) および 2 (ファイルの末尾からの相対です、通常は負の値をとりますが、プラットフォームによっては、ファイルの末尾を超えてファイルをシークできます) があります。ファイルをテキストモードで開いている場合には、 offset に指定する値として信用できるのは tell() の示す値だけです。それ以外の値を指定した場合の動作は未定義です。
+全てのファイルオブジェクトがシーク可能ではないので注意してください。"""),
 
 ],
 
 
 'file.softspace': [
-('4bb402c4316f79ac3da9682929fd29c5', False, 
-"""flag indicating that a space needs to be printed; used by print"""),
+('4bb402c4316f79ac3da9682929fd29c5', True, 
+"""空白を印字するかどうかを示すフラグです。 print が使います。"""),
 
 ],
 
 
 'file.tell': [
-('3d170a45d592c2d112f0c5562020c31d', False, 
-"""tell() -> current file position, an integer (may be a long integer)."""),
+('3d170a45d592c2d112f0c5562020c31d', True, 
+"""tell() は現在のファイル位置を整数 (長整数の場合もあります) で返します。"""),
 
 ],
 
 
 'file.truncate': [
-('47064b4473ad0b4a829e730c43829c3f', False, 
-"""truncate([size]) -> None.  Truncate the file to at most size bytes.
+('47064b4473ad0b4a829e730c43829c3f', True, 
+"""truncate([size]) は、ファイルを指定 size バイトまでに切り詰めて None を返します。
 
-Size defaults to the current file position, as returned by tell()."""),
+size のデフォルト値は現在のファイル位置です。ファイル位置には tell() の返す値を使います。"""),
 
 ],
 
 
 'file.write': [
-('1af4b7aebe3cb207bbfe8a68d1fc69b2', False, 
-"""write(str) -> None.  Write string str to file.
+('1af4b7aebe3cb207bbfe8a68d1fc69b2', True, 
+"""write(str) は文字列をファイルに書きこんで None を返します。
 
-Note that due to buffering, flush() or close() may be needed before
-the file on disk reflects the data written."""),
+バッファリングが行われている場合、書き込んだデータをディスク上のファイルに反映させるために flush() や close() が必要な場合があるので注意して下さい。"""),
 
 ],
 
 
 'file.writelines': [
-('6e1ae37e2f03cf137294bf6f9f8bed07', False, 
-"""writelines(sequence_of_strings) -> None.  Write the strings to the file.
+('6e1ae37e2f03cf137294bf6f9f8bed07', True, 
+"""writelines(sequence_of_strings) は複数の文字列をファイルに書きこんで None を返します。
 
-Note that newlines are not added.  The sequence can be any iterable object
-producing strings. This is equivalent to calling write() for each string."""),
+改行は付加されないので注意してください。 sequence_of_strings には文字列を逐次生成するイテレーション可能オブジェクトなら何でも指定できます。各文字列に対して繰り返し write()  を呼び出すのと同じです。"""),
 
 ],
 
 
 'file.xreadlines': [
-('b97ffc8dc0b6057be3c8d7a87e119d82', False, 
-"""xreadlines() -> returns self.
+('b97ffc8dc0b6057be3c8d7a87e119d82', True, 
+"""xreadlines() -> 自分自身を返します
 
-For backward compatibility. File objects now include the performance
-optimizations previously implemented in the xreadlines module."""),
+以前のバージョンとの互換性のために存在しています。現在のファイルオブジェクトには、 xreadlines モジュールが実装してたのと同じパフォーマンス最適化の仕組みが入っています。"""),
 
 ],
 
 
 'filter': [
-('98015df23077266d4d0a2bfe0a1b029d', False, 
-"""filter(function or None, sequence) -> list, tuple, or string
+('98015df23077266d4d0a2bfe0a1b029d', True, 
+"""filter(function or None, sequence) -> リスト、タプルまたは文字列
 
-Return those items of sequence for which function(item) is true.  If
-function is None, return the items that are true.  If sequence is a tuple
-or string, return the same type, else return a list."""),
+sequence の要素の中から、 function(item) が真であるものだけを返します。 function を None にすると、item の値が真であるもののを返します。 sequence がタプルか文字列の場合には同じ型で、それ以外の場合はリスト型の値を返します。"""),
 
 ],
 
 
 'float': [
-('c902f5cce9a7e3acc1b6c327c84de0e2', False, 
-"""float(x) -> floating point number
+('c902f5cce9a7e3acc1b6c327c84de0e2', True, 
+"""float(x) -> 浮動小数点数
 
-Convert a string or number to a floating point number, if possible."""),
+文字列または数値を、可能であれば浮動小数点数に変換します。"""),
 
 ],
 
 
 'float.__abs__': [
-('f2abd704a5f550221ed980b2e2705c32', False, 
+('f2abd704a5f550221ed980b2e2705c32', True, 
 """x.__abs__() <==> abs(x)"""),
 
 ],
 
 
 'float.__add__': [
-('e6460aedb37b9d9bab7a60fb4f7dbaa6', False, 
+('e6460aedb37b9d9bab7a60fb4f7dbaa6', True, 
 """x.__add__(y) <==> x+y"""),
 
 ],
 
 
 'float.__coerce__': [
-('3d0dc814e0e5f1542dfcb94e85548628', False, 
+('3d0dc814e0e5f1542dfcb94e85548628', True, 
 """x.__coerce__(y) <==> coerce(x, y)"""),
 
 ],
 
 
 'float.__div__': [
-('4c99c4ef649797ccba5eac04ff19ddb2', False, 
+('4c99c4ef649797ccba5eac04ff19ddb2', True, 
 """x.__div__(y) <==> x/y"""),
 
 ],
 
 
 'float.__divmod__': [
-('2b7d2620e0eea6f731d872ecd08e9db0', False, 
+('2b7d2620e0eea6f731d872ecd08e9db0', True, 
 """x.__divmod__(y) <==> divmod(x, y)"""),
 
 ],
 
 
 'float.__float__': [
-('4fda8084fbf981f8ca05d3269cac8fff', False, 
+('4fda8084fbf981f8ca05d3269cac8fff', True, 
 """x.__float__() <==> float(x)"""),
 
 ],
 
 
 'float.__floordiv__': [
-('9a95fb992e47a548c67dd066dc18db92', False, 
+('9a95fb992e47a548c67dd066dc18db92', True, 
 """x.__floordiv__(y) <==> x//y"""),
 
 ],
 
 
 'float.__format__': [
-('944e5993f39b35e4d2b4d83a2a0d8420', False, 
-"""float.__format__(format_spec) -> string
+('944e5993f39b35e4d2b4d83a2a0d8420', True, 
+"""float.__format__(format_spec) -> 文字列
 
-Formats the float according to format_spec."""),
+float 型の値を format_spec に従って文字列にフォーマットします。"""),
 
 ],
 
 
 'float.__getformat__': [
-('c59142a12ff0d7f9641a347f23c79898', False, 
-"""float.__getformat__(typestr) -> string
+('c59142a12ff0d7f9641a347f23c79898', True, 
+"""float.__getformat__(typestr) -> 文字列
 
-You probably don\'t want to use this function.  It exists mainly to be
-used in Python\'s test suite.
+通常、この関数が必要になることはありません。主に、 Python のテストスイート用に存在している関数です。
 
-typestr must be \'double\' or \'float\'.  This function returns whichever of
-\'unknown\', \'IEEE, big-endian\' or \'IEEE, little-endian\' best describes the
-format of floating point numbers used by the C type named by typestr."""),
+typestr は \'double\' または \'float\' です。この関数は、 typestr の示す型として C で定義されている浮動小数点数のフォーマットが、 \'unknown\', \'IEEE, big-endian\', \'IEEE, little-endian\' のどれに一番近いかを調べて返します。"""),
 
 ],
 
 
 'float.__getnewargs__': [
-('d41d8cd98f00b204e9800998ecf8427e', False, 
+('d41d8cd98f00b204e9800998ecf8427e', True,
 """"""),
 
 ],
 
 
 'float.__int__': [
-('4ce28b4400b621494ac706c935c68a5c', False, 
+('4ce28b4400b621494ac706c935c68a5c', True,
 """x.__int__() <==> int(x)"""),
 
 ],
 
 
 'float.__long__': [
-('8c929f31b1228256035450345e93d7c8', False, 
+('8c929f31b1228256035450345e93d7c8', True, 
 """x.__long__() <==> long(x)"""),
 
 ],
 
 
 'float.__mod__': [
-('6833114697ac82c60289fa24897eabf0', False, 
+('6833114697ac82c60289fa24897eabf0', True, 
 """x.__mod__(y) <==> x%y"""),
 
 ],
 
 
 'float.__mul__': [
-('131e3ee8270a7e3a4eb3048963c3035f', False, 
+('131e3ee8270a7e3a4eb3048963c3035f', True, 
 """x.__mul__(y) <==> x*y"""),
 
 ],
 
 
 'float.__neg__': [
-('b8116e2ccb4eb620a227d47d5ade8aab', False, 
+('b8116e2ccb4eb620a227d47d5ade8aab', True, 
 """x.__neg__() <==> -x"""),
 
 ],
 
 
 'float.__nonzero__': [
-('6ef831e34b2bd8389823930cdc5da741', False, 
+('6ef831e34b2bd8389823930cdc5da741', True, 
 """x.__nonzero__() <==> x != 0"""),
 
 ],
 
 
 'float.__pos__': [
-('a918e20eebd49d8da08d2c4fd79d3c2e', False, 
+('a918e20eebd49d8da08d2c4fd79d3c2e', True, 
 """x.__pos__() <==> +x"""),
 
 ],
 
 
 'float.__pow__': [
-('cf0ec3f8787ff00d59011db965541daf', False, 
+('cf0ec3f8787ff00d59011db965541daf', True, 
 """x.__pow__(y[, z]) <==> pow(x, y[, z])"""),
 
 ],
 
 
 'float.__radd__': [
-('b25ae2b25d815baf4bd20478a2a0f5fa', False, 
+('b25ae2b25d815baf4bd20478a2a0f5fa', True, 
 """x.__radd__(y) <==> y+x"""),
 
 ],
 
 
 'float.__rdiv__': [
-('cbbf46f634bdd2cf96890cdd6f6e8818', False, 
+('cbbf46f634bdd2cf96890cdd6f6e8818', True, 
 """x.__rdiv__(y) <==> y/x"""),
 
 ],
 
 
 'float.__rdivmod__': [
-('e0f8f012671ac842a6e3b5c1b626c425', False, 
+('e0f8f012671ac842a6e3b5c1b626c425', True, 
 """x.__rdivmod__(y) <==> divmod(y, x)"""),
 
 ],
 
 
 'float.__rfloordiv__': [
-('65d54e9fd86aeeaf263c3295725f8779', False, 
+('65d54e9fd86aeeaf263c3295725f8779', True, 
 """x.__rfloordiv__(y) <==> y//x"""),
 
 ],
 
 
 'float.__rmod__': [
-('06f1130e0513ae2be0f9c61a70a181a4', False, 
+('06f1130e0513ae2be0f9c61a70a181a4', True, 
 """x.__rmod__(y) <==> y%x"""),
 
 ],
 
 
 'float.__rmul__': [
-('6ee329cd333c8616bca5d4eec3709a6d', False, 
+('6ee329cd333c8616bca5d4eec3709a6d', True, 
 """x.__rmul__(y) <==> y*x"""),
 
 ],
 
 
 'float.__rpow__': [
-('bcab33856c7f1ac53d2945d8680042a0', False, 
+('bcab33856c7f1ac53d2945d8680042a0', True, 
 """y.__rpow__(x[, z]) <==> pow(x, y[, z])"""),
 
 ],
 
 
 'float.__rsub__': [
-('38c09ada0390bc15efda2fda66cf5bf0', False, 
+('38c09ada0390bc15efda2fda66cf5bf0', True, 
 """x.__rsub__(y) <==> y-x"""),
 
 ],
 
 
 'float.__rtruediv__': [
-('d27e2573016197cc6beff9a155d1a605', False, 
+('d27e2573016197cc6beff9a155d1a605', True, 
 """x.__rtruediv__(y) <==> y/x"""),
 
 ],
 
 
 'float.__setformat__': [
-('d19332a09f4b6ada25f650296d3c1538', False, 
+('d19332a09f4b6ada25f650296d3c1538', True, 
 """float.__setformat__(typestr, fmt) -> None
 
-You probably don\'t want to use this function.  It exists mainly to be
-used in Python\'s test suite.
+通常、この関数が必要になることはありません。主に、 Python のテストスイート用に存在している関数です。
 
-typestr must be \'double\' or \'float\'.  fmt must be one of \'unknown\',
-\'IEEE, big-endian\' or \'IEEE, little-endian\', and in addition can only be
-one of the latter two if it appears to match the underlying C reality.
+typestr は \'double\' または \'float\' です。 fmt には \'unknown\', \'IEEE, big-endian\', \'IEEE, little-endian\' のいずれかを指定します。さらに、後者の二つは、実際に C で使われているフォーマットに一致している方しか使えません。
 
-Overrides the automatic determination of C-level floating point type.
-This affects how floats are converted to and from binary strings."""),
+この関数は、 C レベルの浮動小数点型の自動判別の設定をオーバライドします。この関数は、 float 型の値とバイナリエンコード文字列との間の変換方法を制御します。
+"""),
 
 ],
 
 
 'float.__sub__': [
-('f311f7fcb90645e03097a51bf2c3ae3b', False, 
+('f311f7fcb90645e03097a51bf2c3ae3b', True, 
 """x.__sub__(y) <==> x-y"""),
 
 ],
 
 
 'float.__truediv__': [
-('a3b7c4cb9a3324a0fef052ee4d9d94aa', False, 
+('a3b7c4cb9a3324a0fef052ee4d9d94aa', True, 
 """x.__truediv__(y) <==> x/y"""),
 
 ],
 
 
 'float.__trunc__': [
-('afaf1bd4ef8cd31f70c0bd38393719e3', False, 
-"""Returns the Integral closest to x between 0 and x."""),
+('afaf1bd4ef8cd31f70c0bd38393719e3', True, 
+"""0 から x までの整数のうち、もっとも x に近い値を返します。"""),
 
 ],
 
 
 'float.as_integer_ratio': [
-('8c5516ac33b1dfe9ea034d1b5d6a9f85', False, 
+('8c5516ac33b1dfe9ea034d1b5d6a9f85', True, 
 """float.as_integer_ratio() -> (int, int)
 
-Returns a pair of integers, whose ratio is exactly equal to the original
-float and with a positive denominator.
-Raises OverflowError on infinities and a ValueError on NaNs.
+もとの float の値と等しい分数を表す整数のペアを、分母が常に正の値をとるようにして返します。値が無限大 (infinity) の場合には OverflowError を、 NaN の場合には ValueError を送出します。
 
 >>> (10.0).as_integer_ratio()
 (10, 1)
@@ -1829,17 +1777,17 @@ Raises OverflowError on infinities and a ValueError on NaNs.
 
 
 'float.conjugate': [
-('ca11cc47264f8fc92a825f39b589f869', False, 
-"""Returns self, the complex conjugate of any float."""),
+('ca11cc47264f8fc92a825f39b589f869', True, 
+"""複素共役として、自分自身を返します。"""),
 
 ],
 
 
 'float.fromhex': [
-('76fa5da011a42cde2dadd635ab49f037', False, 
+('76fa5da011a42cde2dadd635ab49f037', True, 
 """float.fromhex(string) -> float
 
-Create a floating-point number from a hexadecimal string.
+16進表現の文字列から浮動小数点数を生成します。
 >>> float.fromhex(\'0x1.ffffp10\')
 2047.984375
 >>> float.fromhex(\'-0x1p-1074\')
@@ -1849,10 +1797,10 @@ Create a floating-point number from a hexadecimal string.
 
 
 'float.hex': [
-('f4c02f802d6978ec85829c386e1d402a', False, 
-"""float.hex() -> string
+('f4c02f802d6978ec85829c386e1d402a', True, 
+"""float.hex() -> 文字列
 
-Return a hexadecimal representation of a floating-point number.
+浮動小数点数の16進数表現を返します。
 >>> (-0.1).hex()
 \'-0x1.999999999999ap-4\'
 >>> 3.14159.hex()
@@ -1862,32 +1810,32 @@ Return a hexadecimal representation of a floating-point number.
 
 
 'float.imag': [
-('d213520f337cea7606f1f1c12f1dc6b5', False, 
-"""the imaginary part of a complex number"""),
+('d213520f337cea7606f1f1c12f1dc6b5', True, 
+"""複素数の虚数部を返します。"""),
 
 ],
 
 
 'float.is_integer': [
-('3b4797db718cdae933d3a0a53db09828', False, 
-"""Returns True if the float is an integer."""),
+('3b4797db718cdae933d3a0a53db09828', True, 
+"""値が整数であれば True を返します。"""),
 
 ],
 
 
 'float.real': [
-('72d30dc49502e1a2aa13e8eaa71c378e', False, 
-"""the real part of a complex number"""),
+('72d30dc49502e1a2aa13e8eaa71c378e', True, 
+"""複素数の実数部を返します。"""),
 
 ],
 
 
 'format': [
-('3c16178038607341bda1d46a5a3d75bb', False, 
+('3c16178038607341bda1d46a5a3d75bb', True, 
 """format(value[, format_spec]) -> string
 
-Returns value.__format__(format_spec)
-format_spec defaults to \"\""""),
+value.__format__(format_spec) を返します。
+format_spec のデフォルト値は \"\" です。"""),
 
 ],
 

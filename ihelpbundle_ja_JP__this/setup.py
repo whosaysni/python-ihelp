@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "ihelpbundle_ja_JP__this",
-    version = "0.1.5",
+    version = "0.1.6",
     packages = find_packages(),
 
     author = 'Yasushi Masuda',
