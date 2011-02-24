@@ -1,9 +1,9 @@
 # coding: utf-8
-# Copyright (c) 2010, 2011 Yasushi Masuda. All rights reserved.
+# Copyright (c) 2010, 2011 Yasushi Masuda <whosaysni@gmail.com>. All rights reserved.
 """
 python-ihelp: i18n version of help().
 
-Language pack name format: ihelp_<language>__<package_name>
+Nameing convention of language pack: ihelp_<language>__<package_name>
 
 """
 import __builtin__
@@ -53,7 +53,11 @@ class GetDoc(object):
         self._getdoc = _getdoc
         # load special (builtin) bundle.
         if not (self.cache is None):
-            self.cache.update(self.load_catalog_bundle('this', language))
+            builtin_bundle = self.load_catalog_bundle('py%d%d' %sys.version_info[:2], language)
+            if not builtin_bundle:
+                # old bundle name
+                builtin_bundle = self.load_catalog_bundle('this', language)
+            self.cache.update(builtin_bundle)
         _debug("GetDoc(language='%s', ignore_cache=%s, _getdoc=%s)",
                language, ignore_cache, _getdoc)
 
@@ -258,6 +262,5 @@ def install(name, *args, **kwargs):
     # installs ihelp under __builtin__ namespace.
     import __builtin__
     setattr(__builtin__, name, ipydoc.Helper(sys.stdin, sys.stdout))
-
 
 install('ihelp')
