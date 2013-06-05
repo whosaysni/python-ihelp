@@ -1,55 +1,55 @@
-= Python-ihelp =
+Python-ihelp
+===================
 
 This project will provide ihelp() which provides translated version of python's builtin help().
 
-  組み込みの help() を拡張して、ヘルプドキュメントを翻訳して表示する機能( ihelp() )を提供するプロジェクトです。
+組み込みの help() を拡張して、ヘルプドキュメントを翻訳して表示する機能( ihelp() )を提供するプロジェクトです。
 
 _IMPORTANT_: This project is still pre-pre-pre-alpha state, though you can play it now. Stay tuned.
 
-  _大事なお約束_ : 遊べるけど、まだまだalphaのお試し版。
+_大事なお約束_ : 遊べるけど、まだまだalphaのお試し版。
 
-[TranslationStatusIndex translation status]
 
-== usage ==
-  # install ihelp_ and translation bundle for builtin functions/ihelp_ と組み込み関数の翻訳（まだ一部）パッケージをインストールします
-{{{
-# note that package name is ihelp (no underscore) but actual package name is ihelp_
-$ easy_install ihelp; easy_install ihelpbundle_ja_JP__this
-}}}
-  # import ihelp_ (notice an underscore is suffixed), then play with ihelp()./ ihelp_ (アンダースコアがついてます。注意)をimport して、 help() の代わりに ihelp() を呼びます。
-{{{
->>> import ihelp_
->>> ihelp(bytearray)
+usage
+=========
+
+#. install ihelp_ and translation bundle for builtin functions/ihelp_ と組み込み関数の翻訳（まだ一部）パッケージをインストールします::
+
+  # note that package name is ihelp (no underscore) but actual package name is ihelp_
+  $ easy_install ihelp; easy_install ihelpbundle_ja_JP__this
+
+#. import ihelp_ (notice an underscore is suffixed), then play with ihelp()./ ihelp_ (アンダースコアがついてます。注意)をimport して、 help() の代わりに ihelp() を呼びます。::
+
+  >>> import ihelp_
+  >>> ihelp(bytearray)
 
 Transmitting file data .
 Help on class bytearray in module __builtin__:
 
-class bytearray(object)
- |  bytearray(iterable_of_ints) -> bytearray オブジェクト
- |  bytearray(string, encoding[, errors]) -> bytearray オブジェクト
- |  bytearray(bytes_or_bytearray) -> bytes_or_bytearray の変更可能なコピー
- |  bytearray(memory_view) -> bytearray オブジェクト
- |  
- |  以下の形式のデータから、変更可能なバイト列 (bytearray) を生成します。:
- |    - 値が range(256) の範囲の整数のリスト
- |    - 特定のエンコーディング方式でエンコードされた文字列
- |    - バイトアレイオブジェクト、またはバイトデータの列
- |    - バッファ (buffer) API を備えた任意のオブジェクト
- |  
- |  bytearray(int) -> bytearray オブジェクト
- |  
- |  指定した長さで、値がすべてゼロの bytearray を生成します。
- |  
- |  Methods defined here:
- |  
- |  __add__(...)
- |      x.__add__(y) <==> x+y
- |  
- |  __alloc__(...)
- |      B.__alloc__() -> int
- |      
- |      実際に確保したバイト数を返します。
+  class bytearray(object)
+   |  bytearray(iterable_of_ints) -> bytearray オブジェクト
+   |  bytearray(string, encoding[, errors]) -> bytearray オブジェクト
+   |  bytearray(bytes_or_bytearray) -> bytes_or_bytearray の変更可能なコピー
+   |  bytearray(memory_view) -> bytearray オブジェクト
+   |  
+   |  以下の形式のデータから、変更可能なバイト列 (bytearray) を生成します。:
+   |    - 値が range(256) の範囲の整数のリスト
+   |    - 特定のエンコーディング方式でエンコードされた文字列
+   |    - バイトアレイオブジェクト、またはバイトデータの列
+   |    - バッファ (buffer) API を備えた任意のオブジェクト
+   |  
+   |  bytearray(int) -> bytearray オブジェクト
+   |  
+   |  指定した長さで、値がすべてゼロの bytearray を生成します。
+   |  
+   |  Methods defined here:
+   |  
+   |  __add__(...)
+   |      x.__add__(y) <==> x+y
+   |  
+   |  __alloc__(...)
+   |      B.__alloc__() -> int
+   |      
+   |      実際に確保したバイト数を返します。
 ...
-}}}
-
 
